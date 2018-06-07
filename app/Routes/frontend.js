@@ -14,7 +14,3 @@
 */
 
 const Route = use('Route')
-
-Route.on('/').render('welcome')
-
-use('require-all')(`${use('Helpers').appRoot()}/app/Routes`)
