@@ -81,7 +81,7 @@ Route.group(() => {
   *     produces:
   *      - application/json
   */
-  Route.get('/brand', 'BrandController.index')
+  Route.get('/brand', 'BrandController.index').as('getBrandAll')
 
   /**
   * @swagger

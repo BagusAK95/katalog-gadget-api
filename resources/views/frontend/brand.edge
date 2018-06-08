@@ -1,0 +1,75 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">Data Brand</div>
+    <div class="panel-body">
+	<table class='table' id="example"  style="width:90%">
+		<thead>
+        <tr>
+			<th>#</th>
+			<th>Brand</th>
+		</tr>
+        </thead>
+		<tbody id="body">
+			
+		</tbody>
+	</table>
+</div>
+</div>
+<div class="modal fade" id='modalnya' tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Detail</h4>
+      </div>
+      <div class="modal-body">
+        <p id='judulnya'></p>
+        <p id='isinya'>One fine body&hellip;</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <a id='tombol' class="btn btn-primary">Direct</a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+</center>
+	<script>
+        showbrand();
+        function showbrand()
+        {
+            $.ajax({ 
+                type: 'GET', 
+                url: 'http://127.0.0.1:3333/api/v1/brand', 
+                dataType: 'json',
+                success: function (data) { 
+                    $.each(data, function(index, element) {
+
+                        var tr_data = "<tr> <td>"+element.id
+                            +"</td> <td><a href='#'  data-toggle='modal' data-target='#modalnya' onclick='showdetailbrand("+element.id+")' >"+element.name+"</a></td></tr>"
+                        $("#body").append(tr_data)
+
+                    });
+                }
+            });
+        }
+        function showdetailbrand(id)
+        {
+            $.ajax({ 
+                type: 'GET', 
+                url: 'http://127.0.0.1:3333/api/v1/brand/'+id, 
+                dataType: 'json',
+                success: function (data) { 
+                    $.each(data, function(index, element) {
+                        $("#judulnya").html(element.name).show();
+                        $("#isinya").html(element.source).show();
+                        $('#tombol').attr('href',element.source);
+                    });
+                }
+            });
+        }
+
+        $(document).ready(function() {
+          //  $('#example').DataTable();
+        } );
+	</script>

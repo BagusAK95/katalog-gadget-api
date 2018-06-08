@@ -14,3 +14,7 @@
 */
 
 const Route = use('Route')
+
+Route.on('/brand').render('frontend/brand')
+Route.on('/home').render('frontend/home')
+
