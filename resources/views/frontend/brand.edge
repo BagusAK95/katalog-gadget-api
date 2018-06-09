@@ -32,6 +32,7 @@
             
         </tbody>
     </table>
+    <div id="pagination"></div>
                 </div>
              </div>
         </div>
@@ -114,22 +115,23 @@
 
 </center>
 	<script>
-        showbrand();
-        function showbrand()
+        showbrand(1);
+        function showbrand(page)
         {
             $.ajax({ 
                 type: 'GET', 
-                url: 'http://127.0.0.1:3333/api/v1/brand', 
+                url: 'http://127.0.0.1:3333/api/v1/brand/' + page + '/10', 
                 dataType: 'json',
                 success: function (data) { 
                     var text="";
-                    $.each(data, function(index, element) {
+                    $.each(data.data, function(index, element) {
                         var tr_data = "<tr> <td>"+element.id
                             +"</td> <td><a href='#'  data-toggle='modal' data-target='#modalnya' onclick='showdetailbrand("+element.id+")' >"+element.name+"</a></td><td><a class='btn btn-warning' data-toggle='modal' data-target='#modaledit' onclick='showeditbrand("+element.id+")'><span class='fa fa-pencil'></span>&nbsp;Update</a>&nbsp;&nbsp;<a class='btn btn-danger' onclick='deleteBrand("+element.id+")' ><span class='fa fa-remove'></span>&nbsp;Delete</a></td></tr>"
                         text += tr_data;
                     });
 
                     $("#body").html(text).show();
+                    $("#pagination").html("<button onclick='showbrand(1)'>First</button><button onclick='showbrand(" + (data.page - 1) + ")'>Prev</button>  <button onclick='showbrand(" + (data.page + 1) + ")'>Next</button><button onclick='showbrand(" + data.lastPage + ")'>Last</button>").show();
                 }
             });
         }
@@ -183,7 +185,7 @@
                 success: function (data) { 
                     alert("Add Data Success.");
                     $(body).animate({scrollTop: 5000000000});
-                    showbrand();
+                    showbrand(1);
                     $('#exampleModal').modal('hide');
                 }
                 });
@@ -214,7 +216,7 @@
                             $('#modaledit').modal('hide');
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
-                            showbrand();
+                            showbrand(1);
                         }
                     });
                 },
@@ -241,7 +243,7 @@
                             },
                             success: function (data) { 
                                 alert("Delete Data Success.");
-                                showbrand();
+                                showbrand(1);
                             }
                         });
                     },
