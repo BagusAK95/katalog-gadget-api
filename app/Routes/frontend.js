@@ -15,6 +15,26 @@
 
 const Route = use('Route')
 
-Route.on('/brand').render('frontend/brand')
-Route.on('/home').render('frontend/home')
+Route.on('/admin').render('frontend/main')
+Route.on('/admin/brand').render('frontend/brand')
+Route.on('/admin/home').render('frontend/home')
+
+/*Route.put('/admin/puttoken/:id', async ({ params }) => {
+    const post = params.id
+    session.put('token', post)
+  })*/
+
+Route.get('/admin/puttoken/:id', async ({ params , session }) => {
+    const post = params.id
+    session.put('token', post)
+    //return post
+})
+
+Route.get('/admin/gettoken', ({ session }) => {
+    return session.all()
+  })
+  
+
+
+
 

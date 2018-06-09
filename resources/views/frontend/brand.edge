@@ -1,19 +1,72 @@
-<div class="panel panel-primary">
-    <div class="panel-heading">Data Brand</div>
-    <div class="panel-body">
-	<table class='table' id="example"  style="width:90%">
-		<thead>
+
+<div class="container-fluid">
+    <div class="row bg-title">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h4 class="page-title">Manajemen Brand</h4> </div>
+        <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+            <a href="#" data-toggle="modal" data-target="#exampleModal" class="btn btn-success pull-right m-l-20 waves-effect waves-light">Tambah</a>
+            <ol class="breadcrumb">
+                <li><a href="#">Application</a></li>
+                <li class="active">Manajemen Brand</li>
+            </ol>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!--row -->
+    <div class="row">
+         <div class="col-sm-12">
+            <div class="white-box">
+                <h3 class="box-title m-b-0">Data Brand</h3>
+                <br/>
+                <div class="table-responsive">
+
+    <table class="table table-striped">
+        <thead>
         <tr>
-			<th>#</th>
-			<th>Brand</th>
-		</tr>
+            <th>#</th>
+            <th>Brand</th>
+            <th>Action</th>
+        </tr>
         </thead>
-		<tbody id="body">
-			
-		</tbody>
-	</table>
+        <tbody id="body">
+            
+        </tbody>
+    </table>
+                </div>
+             </div>
+        </div>
+    </div>
 </div>
+
+
+
+
+<!-- Modal ADD -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Brand</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id='simpan'>
+      <div class="modal-body">
+        Brand : <input type='text' name='name' class='form-control'><br>
+        Source : <input type='text' name='source' class='form-control'>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a onclick='simpanBrand()' class='btn btn-success'>Add</a>
+      </div>
+      </form>
+    </div>
+  </div>
 </div>
+<!-- End Modal ADD -->
+
+<!-- Modal Detail -->
 <div class="modal fade" id='modalnya' tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -32,6 +85,32 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<!-- End Modal Detail -->
+
+
+<!-- Modal Edit -->
+<div class="modal fade" id='modaledit' tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Update Data</h4>
+      </div>
+      <form id='simpanedit'>
+      <div class="modal-body">
+         Brand : <input type='text' id='name' name='name' class='form-control'><br>
+        Source : <input type='text' id='source' name='source' class='form-control'>
+        <input type='hidden' id='id' name='id'>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <a id='tomboledit' class="btn btn-primary">Update</a>
+      </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- End Modal Edit -->
 
 </center>
 	<script>
@@ -43,16 +122,18 @@
                 url: 'http://127.0.0.1:3333/api/v1/brand', 
                 dataType: 'json',
                 success: function (data) { 
+                    var text="";
                     $.each(data, function(index, element) {
-
                         var tr_data = "<tr> <td>"+element.id
-                            +"</td> <td><a href='#'  data-toggle='modal' data-target='#modalnya' onclick='showdetailbrand("+element.id+")' >"+element.name+"</a></td></tr>"
-                        $("#body").append(tr_data)
-
+                            +"</td> <td><a href='#'  data-toggle='modal' data-target='#modalnya' onclick='showdetailbrand("+element.id+")' >"+element.name+"</a></td><td><a class='btn btn-warning' data-toggle='modal' data-target='#modaledit' onclick='showeditbrand("+element.id+")'><span class='fa fa-pencil'></span>&nbsp;Update</a>&nbsp;&nbsp;<a class='btn btn-danger' onclick='deleteBrand("+element.id+")' ><span class='fa fa-remove'></span>&nbsp;Delete</a></td></tr>"
+                        text += tr_data;
                     });
+
+                    $("#body").html(text).show();
                 }
             });
         }
+
         function showdetailbrand(id)
         {
             $.ajax({ 
@@ -69,7 +150,163 @@
             });
         }
 
+        function showeditbrand(id)
+        {
+            $.ajax({ 
+                type: 'GET', 
+                url: 'http://127.0.0.1:3333/api/v1/brand/'+id, 
+                dataType: 'json',
+                success: function (data) { 
+                    $.each(data, function(index, element) {
+                        $("#name").val(element.name);
+                        $("#source").val(element.source);
+                        $("#id").val(element.id);
+                        $('#tomboledit').attr('onclick', "updateBrand('"+element.id+"')");
+                    });
+                }
+            });
+        }
+
+        function simpanBrand()
+        {
+            $.ajax({ 
+            type: 'GET', 
+            url: '/admin/gettoken', 
+            success: function (data) { 
+               $.ajax({ 
+                type: 'POST', 
+                url: 'http://127.0.0.1:3333/api/v1/brand', 
+                headers: {
+					'Authorization': 'Bearer ' + data.token
+				},
+                data : $("#simpan").serialize(),
+                success: function (data) { 
+                    alert("Add Data Success.");
+                    $(body).animate({scrollTop: 5000000000});
+                    showbrand();
+                    $('#exampleModal').modal('hide');
+                }
+                });
+            },
+            error: function ()
+            {
+                return false;
+            }
+            });
+        }
+        
+
+        function updateBrand(id)
+        {
+            $.ajax({ 
+                type: 'GET', 
+                url: '/admin/gettoken', 
+                success: function (data) { 
+                    $.ajax({ 
+                        type: 'PUT', 
+                        url: 'http://127.0.0.1:3333/api/v1/brand/'+id, 
+                        headers: {
+                            'Authorization': 'Bearer ' + data.token
+                        },
+                        data : $("#simpanedit").serialize(),
+                        success: function (data) { 
+                            alert("Update Data Success.");
+                            $('#modaledit').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            showbrand();
+                        }
+                    });
+                },
+                error: function ()
+                {
+                    return false;
+                }
+            });
+        }
+
+        function deleteBrand(id)
+        {
+            if(confirm('Are you sure for delete this data?'))
+            {
+                $.ajax({ 
+                    type: 'GET', 
+                    url: '/admin/gettoken', 
+                    success: function (data) { 
+                        $.ajax({ 
+                            type: 'DELETE', 
+                            url: 'http://127.0.0.1:3333/api/v1/brand/'+id, 
+                            headers: {
+                                'Authorization': 'Bearer ' + data.token
+                            },
+                            success: function (data) { 
+                                alert("Delete Data Success.");
+                                showbrand();
+                            }
+                        });
+                    },
+                    error: function ()
+                    {
+                        return false;
+                    }
+                });
+            }
+        }
+
+        
         $(document).ready(function() {
-          //  $('#example').DataTable();
+            /*$.ajax({ 
+                type: 'GET', 
+                url: 'http://127.0.0.1:3333/api/v1/brand', 
+                dataType: 'json',
+                success: function (data) { 
+                    var text="[";
+                    $.each(data, function(index, element) {
+
+                        var tr_data = '["id","kaka","dada"],';
+                        text += tr_data;
+                    });
+                    text += "]";
+                    var masuk = String(text)
+                    alert(masuk)
+                    $('#example').DataTable(
+                        {
+                            data: masuk,
+                            columns: [
+                                { title: "#" },
+                                { title: "Brand" },
+                                { title: "Action" }
+                            ]
+                        }
+                    );
+                }
+            });
+            */
         } );
+
+
+        $(document).bind('keydown keyup', function(e) {
+            if(e.which === 116) 
+            {
+                if(confirm("Yakin meninggalkan halaman ini?"))
+                {
+                    window.location.reload();
+                }
+                else
+                {
+                    return false;
+                }
+            
+            }
+            if(e.which === 82 && e.ctrlKey) {
+                 if(confirm("Yakin meninggalkan halaman ini?"))
+                {
+                    window.location.reload();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        });
 	</script>
